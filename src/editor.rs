@@ -1,9 +1,14 @@
+use crate::terminal::{Position, Terminal};
 use crossterm::event::Event;
 use crossterm::event::{read, Event::Key, KeyCode::Char, KeyEvent, KeyEventKind, KeyModifiers};
+use crossterm::terminal::size;
 use std::io::{self};
 
-use crate::terminal::{Position, Terminal};
-
+///////////////////////////////////////////
+///need to handle execute. either execute or printing the string should be removed
+//////////////////////////////////////////
+/// have to handle the tilde printing. right now it skips one line when enter is pressed
+////////////////////////////////////////
 pub struct Editor {
     should_quit: bool,
     content: String,
@@ -24,7 +29,7 @@ impl Editor {
             Terminal::clear_screen()?;
             Terminal::print("Bye for now!")?;
         } else {
-            Terminal::draw_rows()?;
+            Self::draw_rows()?;
             Terminal::move_cursor(Position { x: 0, y: 0 })?;
             Terminal::print(&self.content)?;
             Terminal::move_cursor(self.position)?;
@@ -79,5 +84,31 @@ impl Editor {
         let result = self.repl();
         Terminal::terminate().unwrap();
         result.unwrap();
+    }
+    pub fn welcome_msg() -> Result<(), io::Error> {
+        let (t_x, _t_y) = size()?;
+        //let x_pos = t_x / 2;
+        //let y_pos = t_y / 3;
+        let width = "Stop Talking, Code Instead!".len();
+        let padding = (t_x - width as u16) / 2;
+        let spaces = " ".repeat(padding as usize - 1);
+        let welcome_msg = &format!("{spaces}Stop Talking, Code Instead!");
+        Terminal::print(welcome_msg)?;
+        Ok(())
+    }
+    pub fn draw_rows() -> Result<(), io::Error> {
+        let terminal_szie = size()?;
+        for current_row in 0..terminal_szie.1 {
+            Terminal::clear_cline()?;
+            if current_row == terminal_szie.1 / 3 {
+                Self::welcome_msg()?;
+            } else {
+                Terminal::print("~")?;
+            }
+            if current_row + 1 < terminal_szie.1 {
+                Terminal::print("\r\n")?;
+            }
+        }
+        Ok(())
     }
 }
