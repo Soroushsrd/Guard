@@ -15,17 +15,6 @@ pub struct Position {
 }
 
 impl Terminal {
-    pub fn draw_rows() -> Result<(), io::Error> {
-        let terminal_szie = size()?;
-        for current_row in 0..terminal_szie.1 {
-            Self::clear_cline()?;
-            Self::print("~")?;
-            if current_row + 1 < terminal_szie.1 {
-                Self::print("\r\n")?;
-            }
-        }
-        Ok(())
-    }
     pub fn move_cursor(position: Position) -> Result<(), io::Error> {
         let x = position.x as u16;
         let y = position.y as u16;
