@@ -1,9 +1,7 @@
-use editor::Editor;
-
-pub mod editor;
-pub mod terminal;
+mod terminal;
+mod editor;
 
 fn main() {
-    let mut editor = Editor::default();
+    let mut editor = editor::Editor::new();
     editor.run();
 }
