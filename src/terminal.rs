@@ -34,7 +34,8 @@ impl Terminal {
         Self::clear_screen()?;
         //Self::draw_rows()?;
         Self::move_cursor(Position { x: 0, y: 0 })?;
-        Self::execute()
+        Self::execute()?;
+        Ok(())
     }
     pub fn clear_screen() -> Result<(), io::Error> {
         queue!(stdout(), Clear(ClearType::All))
