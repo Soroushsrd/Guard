@@ -1,14 +1,12 @@
 use std::str::FromStr;
 
-use crate::highlights;
-
 pub struct FileType {
     name: String,
-    highlights: HighLights,
+    highlights: HighLightsOptions,
 }
 
 #[derive(Default)]
-pub struct HighLights {
+pub struct HighLightsOptions {
     numbers: bool,
     strings: bool,
     character: bool,
@@ -22,7 +20,7 @@ impl Default for FileType {
     fn default() -> Self {
         Self {
             name: String::from_str("No Name").unwrap(),
-            highlights: HighLights::default(),
+            highlights: HighLightsOptions::default(),
         }
     }
 }
@@ -32,7 +30,7 @@ impl FileType {
         if file_name.ends_with(".rs") {
             return Self {
                 name: String::from("Rust"),
-                highlights: HighLights {
+                highlights: HighLightsOptions {
                     numbers: true,
                     strings: true,
                     character: true,
