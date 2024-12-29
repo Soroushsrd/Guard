@@ -1,10 +1,12 @@
 use crate::terminal::{Position, Terminal};
 use crossterm::event::Event;
 use crossterm::event::{read, Event::Key, KeyCode::Char, KeyEvent, KeyEventKind, KeyModifiers};
+use crossterm::style::Color;
+use crossterm::terminal::size;
 use std::fmt::format;
 use std::io::{self};
-use std::usize;
-
+use std::time::Instant;
+use std::{env, usize};
 ///////////////////////////////////////////
 ///need to handle execute. either execute or printing the string should be removed
 //////////////////////////////////////////
@@ -12,21 +14,67 @@ use std::usize;
 ////////////////////////////////////////
 const NAME: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+const STATUS_FG_COLOR: Color = Color::Rgb {
+    r: 70,
+    g: 70,
+    b: 70,
+};
+const STATUS_BACKGROUND_COLOR: Color = Color::Rgb {
+    r: 239,
+    g: 239,
+    b: 239,
+};
+pub const QUIT_N: u8 = 3;
+
+#[derive(Clone, Copy, PartialEq)]
+pub enum SearchDirection {
+    Forward,
+    Backward,
+}
+
+pub struct Message {
+    text: String,
+    time: Instant,
+}
+
+impl From<String> for Message {
+    fn from(value: String) -> Self {
+        Self {
+            text: value,
+            time: Instant::now(),
+        }
+    }
+}
 
 pub struct Editor {
     should_quit: bool,
-    content: String,
-    position: Position,
+    terminal: Terminal,
+    cursor_position: Position,
+    offset: Position,
+    //document: Document
+    status_message: Message,
+    quit_times: u8,
+    highlighted_word: Option<String>,
+}
+
+impl Default for Editor {
+    fn default() -> Self {
+        let _args: Vec<String> = env::args().collect();
+        let initial_stat = String::from("HELP: Ctrl-f -> Find | Ctrl-s ->Save | Ctrl-q -> Quit");
+
+        Editor {
+            should_quit: false,
+            terminal: Terminal::default(),
+            cursor_position: Position::default(),
+            offset: Position::default(),
+            status_message: Message::from(initial_stat),
+            quit_times: QUIT_N,
+            highlighted_word: None,
+        }
+    }
 }
 
 impl Editor {
-    pub fn default() -> Self {
-        Editor {
-            should_quit: false,
-            content: String::new(),
-            position: Position { x: 0, y: 0 },
-        }
-    }
     pub fn refresh_screen(&mut self) -> Result<(), io::Error> {
         Terminal::hide_cursor()?;
 
