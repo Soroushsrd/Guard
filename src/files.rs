@@ -1,8 +1,8 @@
 use std::str::FromStr;
 
 pub struct FileType {
-    name: String,
-    highlights: HighLightsOptions,
+    pub name: String,
+    pub highlights: HighLightsOptions,
 }
 
 #[derive(Default)]
