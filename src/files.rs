@@ -7,13 +7,13 @@ pub struct FileType {
 
 #[derive(Default)]
 pub struct HighLightsOptions {
-    numbers: bool,
-    strings: bool,
-    character: bool,
-    comments: bool,
-    multiline_comments: bool,
-    primrary_keywords: Vec<String>,
-    secondary_keywords: Vec<String>,
+    pub numbers: bool,
+    pub strings: bool,
+    pub character: bool,
+    pub comments: bool,
+    pub multiline_comments: bool,
+    pub primrary_keywords: Vec<String>,
+    pub secondary_keywords: Vec<String>,
 }
 
 impl Default for FileType {
